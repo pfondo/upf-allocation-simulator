@@ -1,37 +1,44 @@
-## Welcome to GitHub Pages
+# upf-allocation-simulator
 
-You can use the [editor on GitHub](https://github.com/pfondo/upf-allocation-simulator/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Description
 
-### Markdown
+TODO
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Features
 
-```markdown
-Syntax highlighted code block
+TODO
 
-# Header 1
-## Header 2
-### Header 3
+## Execution
 
-- Bulleted
-- List
+usage: main.py [-h] --algorithm ALGORITHM [--minUPFs MINUPFS]
+               [--maxUPFs MAXUPFS]
 
-1. Numbered
-2. List
+optional arguments:
+  -h, --help            show this help message and exit
+  --algorithm ALGORITHM
+                        Specifies the UPF allocation algorithm [Supported: ran
+                        dom/greedy_percentile/greedy_percentile_fast/greedy_av
+                        erage/greedy_max/kmeans/kmeans_greedy_average].
+  --minUPFs MINUPFS     Specifies the minimum number of UPFs to be allocated
+                        [Default: 1].
+  --maxUPFs MAXUPFS     Specifies the maximum number of UPFs to be allocated
+                        [Default: 10].
 
-**Bold** and _Italic_ and `Code` text
+## Input trace format
 
-[Link](url) and ![Image](src)
-```
+TODO
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Results
 
-### Jekyll Themes
+TODO
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/pfondo/upf-allocation-simulator/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## Adding an algorithm
 
-### Support or Contact
+TODO
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## Copyright
+
+Copyright ⓒ 2021 Pablo Fondo Ferreiro <pfondo@gti.uvigo.es>.
+
+This simulator is licensed under the GNU General Public License, version 3 (GPL-3.0). For more information see LICENSE.txt
