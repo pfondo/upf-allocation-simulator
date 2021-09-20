@@ -11,19 +11,19 @@ TODO
 
 ## Execution
 
-usage: main.py [-h] --algorithm ALGORITHM [--minUPFs MINUPFS]
-               [--maxUPFs MAXUPFS]
+    usage: main.py [-h] --algorithm ALGORITHM [--minUPFs MINUPFS]
+                   [--maxUPFs MAXUPFS]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --algorithm ALGORITHM
-                        Specifies the UPF allocation algorithm [Supported: ran
-                        dom/greedy_percentile/greedy_percentile_fast/greedy_av
-                        erage/greedy_max/kmeans/kmeans_greedy_average].
-  --minUPFs MINUPFS     Specifies the minimum number of UPFs to be allocated
-                        [Default: 1].
-  --maxUPFs MAXUPFS     Specifies the maximum number of UPFs to be allocated
-                        [Default: 10].
+    optional arguments:
+      -h, --help            show this help message and exit
+      --algorithm ALGORITHM
+                            Specifies the UPF allocation algorithm [Supported: ran
+                            dom/greedy_percentile/greedy_percentile_fast/greedy_av
+                            erage/greedy_max/kmeans/kmeans_greedy_average].
+      --minUPFs MINUPFS     Specifies the minimum number of UPFs to be allocated
+                            [Default: 1].
+      --maxUPFs MAXUPFS     Specifies the maximum number of UPFs to be allocated
+                            [Default: 10].
 
 ## Input trace format
 
