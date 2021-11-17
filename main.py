@@ -666,6 +666,56 @@ def UPF_allocation_kmeans(G: nx.Graph, num_UPFs, BSs_with_UPF_previous, G_shorte
 
     return BSs_with_UPF_ids
 
+# Static implementation of kmeans considering all BSs
+def UPF_allocation_kmeans_static(G: nx.Graph, num_UPFs, BSs_with_UPF_previous, G_shortest_path_lengths, highest_bs_id):
+    BSs_with_UPF_ids = set()
+
+    ## Calculate k-means clustering considering all BSs
+#    features = []
+#    for bs in G.nodes:
+#        if bs.get_numUEs() > 0:
+#            features.append([bs.get_x(), bs.get_y()])
+
+#    kmeans = KMeans(
+#        init="k-means++", # "random" / "k-means++"
+#        n_clusters=min(num_UPFs, len(features)),
+#        n_init=2,
+#        max_iter=1000,
+#        random_state=0 #To allow for reproducibility
+#    )
+
+    # In case scaling want to be applied
+    # scaler = StandardScaler()
+    # scaled_features = scaler.fit_transform(features)
+    # kmeans.fit(scaled_features)
+
+    #kmeans.fit(features)
+
+    # Pick UPFs closer to cluster centers
+    done_BSs = [False for _ in range(highest_bs_id + 1)]
+
+    #for center_x, center_y in scaler.inverse_transform(kmeans.cluster_centers_):
+    for center_x, center_y in kmeans.cluster_centers_:
+        best_UPF = None
+        best_distance = None
+        for bs in G.nodes:
+            if not done_BSs[bs.get_id()]:
+                distance = bs.get_distance_coords(center_x, center_y)
+                if best_UPF == None or distance < best_distance:
+                    best_UPF = bs.get_id()
+                    best_distance = distance
+
+        BSs_with_UPF_ids.add(best_UPF)
+        done_BSs[best_UPF] = True
+
+    # Add UPFs until reaching desired number of UPFs (for addressing corner cases with very few active BSs)
+    if len(BSs_with_UPF_ids) < num_UPFs:
+        BSs_with_UPF_ids.update(set(sample([x for x in range(G.number_of_nodes()) if x not in BSs_with_UPF_ids], num_UPFs - len(BSs_with_UPF_ids))))
+
+    assert(len(BSs_with_UPF_ids) == num_UPFs)
+
+    return BSs_with_UPF_ids
+
 # Implementation of clustering based on community detection (Louvain modularity maximization) considering active BSs, greedily selecting the best eNB in each cluster
 def UPF_allocation_modularity_greedy_average(G: nx.Graph, num_UPFs, BSs_with_UPF_previous, G_shortest_path_lengths, highest_bs_id):
     BSs_with_UPF_ids = set()
@@ -792,7 +842,7 @@ def get_minimum_hops_from_BS_to_UPF(G, bs, BSs_with_UPF, G_shortest_path_lengths
             # h = len(nx.shortest_path(G, source=bs,
             #                          target=other_bs)) - 1  # Dijkstra
             # Pre-computed Floyd-Wharsall
-            h = G_shortest_path_lengths[bs][other_bs] - 1
+            h = G_shortest_path_lengths[bs][other_bs]
         except:
             continue
         if hops is None or h < hops:
@@ -840,6 +890,7 @@ def mean_confidence_interval(data, confidence=0.95):
         n = len(a)
         m, se = np_mean(a), st_sem(a)
         h = se * st_t._ppf((1+confidence)/2., n-1)
+    # return '{:.3f} {:.3f} {:.3f}'.format(m, max(m-h, 0), m+h)
     return (m, max(m-h, 0), m+h)
 
 
@@ -849,7 +900,7 @@ def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--algorithm", help="Specifies the UPF allocation algorithm [Supported: random/greedy_percentile/greedy_percentile_fast/greedy_average/greedy_max/kmeans/kmeans_greedy_average/modularity_greedy_average/girvan_newman_greedy_average].", required=True)
+        "--algorithm", help="Specifies the UPF allocation algorithm [Supported: random/greedy_percentile/greedy_percentile_fast/greedy_average/greedy_max/kmeans/kmeans_greedy_average/kmeans_static/modularity_greedy_average/girvan_newman_greedy_average].", required=True)
     parser.add_argument(
         "--minUPFs", help="Specifies the minimum number of UPFs to be allocated [Default: {}].".format(DEFAULT_MIN_UPF), type=int, default=DEFAULT_MIN_UPF)
     parser.add_argument(
@@ -871,7 +922,7 @@ def main():
     # Generate graph
     G, BSs, G_shortest_path_lengths, highest_bs_id = generate_graph(bs_file)
 
-    for num_UPFs in range(min_UPFs, max_UPFs + 1):
+    for num_UPFs in range(min_UPFs, max_UPFs + 1):        
         list_results_num_hops = []
         list_results_elapsed_time = []
 
@@ -881,7 +932,7 @@ def main():
             features = []
             for bs in G.nodes:
                 features.append([bs.get_x(), bs.get_y()])
-            global kmeans 
+            global kmeans
             kmeans = KMeans(
                 init="k-means++", # "random" / "k-means++"
                 n_clusters=min(num_UPFs, len(features)),
@@ -964,6 +1015,10 @@ def main():
 
                 print("\r  Iteration {}: {} -> {} UEs".format(
                     iteration, len(UEs), int(num_hops_90th)), end='', file=stderr)
+                
+                # if (iteration % 3000 == 0):
+                #     print()
+                #     analyze_allocation(G, BSs_with_UPF_ids)
 
         print("\r  Number of iterations: {}".format(iteration), file=stderr)
 
