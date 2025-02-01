@@ -1,5 +1,6 @@
 # upf-allocation-simulator
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14783610.svg)](https://doi.org/10.5281/zenodo.14783610)
 
 ## Description
 
